@@ -3,9 +3,11 @@
 import { motion } from 'framer-motion';
 import { BookOpen, Calculator, FileText, Calendar, Users, HelpCircle } from 'lucide-react';
 import { useChatStore } from '@/lib/store';
+import { useRouter } from 'next/navigation';
 
 export function SuggestionCards() {
   const { sendMessage, language } = useChatStore();
+  const router = useRouter();
 
   const suggestions = {
     tr: [
@@ -87,7 +89,7 @@ export function SuggestionCards() {
   };
 
   const handleSuggestionClick = (prompt: string) => {
-    sendMessage(prompt);
+    sendMessage(prompt, router);
   };
 
   return (
