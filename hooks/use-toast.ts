@@ -3,16 +3,18 @@
 // Inspired by react-hot-toast library
 import * as React from 'react';
 
-import type { ToastActionElement, ToastProps } from '@/components/ui/toast';
+import { toast as sonnerToast } from 'sonner';
 
 const TOAST_LIMIT = 1;
 const TOAST_REMOVE_DELAY = 1000000;
 
-type ToasterToast = ToastProps & {
+type ToasterToast = {
   id: string;
   title?: React.ReactNode;
   description?: React.ReactNode;
-  action?: ToastActionElement;
+  action?: { label: string; onClick: (event: React.MouseEvent) => void; };
+  open: boolean;
+  onOpenChange?: (open: boolean) => void;
 };
 
 const actionTypes = {
@@ -139,10 +141,10 @@ function dispatch(action: Action) {
 
 type Toast = Omit<ToasterToast, 'id'>;
 
-function toast({ ...props }: Toast) {
+function toast({ ...props }: Omit<ToasterToast, 'id' | 'open'>) {
   const id = genId();
 
-  const update = (props: ToasterToast) =>
+  const update = (props: Partial<ToasterToast>) =>
     dispatch({
       type: 'UPDATE_TOAST',
       toast: { ...props, id },
@@ -155,7 +157,7 @@ function toast({ ...props }: Toast) {
       ...props,
       id,
       open: true,
-      onOpenChange: (open) => {
+      onOpenChange: (open: boolean) => {
         if (!open) dismiss();
       },
     },
@@ -183,9 +185,9 @@ function useToast() {
 
   return {
     ...state,
-    toast,
+    toast: sonnerToast,
     dismiss: (toastId?: string) => dispatch({ type: 'DISMISS_TOAST', toastId }),
   };
 }
 
-export { useToast, toast };
+export { useToast, sonnerToast as toast };
