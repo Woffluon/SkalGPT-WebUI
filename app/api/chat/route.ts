@@ -8,8 +8,6 @@ import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase"
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold, type Content } from "@google/generative-ai";
 import { Document } from 'langchain/document'; // Document tipini ekliyorum
 
-export const runtime = 'edge';
-
 const getSystemPrompt = (data: string) => {
   let additionalInfo = '';
   if (data) {
@@ -78,7 +76,6 @@ interface ChatMessage {
 
 export async function POST(req: NextRequest) {
   // Add a check for the essential environment variable
-  console.log('SUPABASE_SERVICE_ROLE_KEY (from process.env):', process.env.SUPABASE_SERVICE_ROLE_KEY ? 'Set' : 'Not Set');
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
     console.error('FATAL: SUPABASE_SERVICE_ROLE_KEY environment variable is not set.');
     return NextResponse.json({ error: 'Server configuration error: Missing service key.' }, { status: 500 });
