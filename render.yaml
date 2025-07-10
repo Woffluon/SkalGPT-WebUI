@@ -1,0 +1,22 @@
+# render.yaml for Next.js Application
+
+services:
+  - type: web
+    name: skalgpt-webui
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    # Automatically install dependencies and run build command
+    autoDeploy: true
+    # Environment variables (sensitive values should be set securely in Render Dashboard)
+    envVars:
+      # Client-side (NEXT_PUBLIC_) variables - these are embedded in the build
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        value: # Set this in Render Dashboard
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+        value: # Set this in Render Dashboard
+      # Server-side variables - these are only available on the server
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false # Set this in Render Dashboard, keep it secret
+      - key: GOOGLE_API_KEY
+        sync: false # Set this in Render Dashboard, keep it secret 
