@@ -31,15 +31,26 @@ export function ChatBubble({ message, isLastMessage, isResponding }: ChatBubbleP
   const prevMessageIdRef = useRef<string | null>(null);
   // Animasyonun ortasında kesilmesini önlemek için bir referans daha.
   const isAnimatingRef = useRef(false);
+  const prevContentRef = useRef<string>('');
 
   useEffect(() => {
     const isNewMessage = prevMessageIdRef.current !== message.id;
+    const isContentChanged = prevContentRef.current !== message.content;
+    
     // Eğer mesaj ID'si değiştiyse, bu yeni bir mesaj demektir. Animasyonu sıfırla.
     if (isNewMessage) {
       setDisplayedText('');
       prevMessageIdRef.current = message.id;
       isAnimatingRef.current = false; // Yeni mesaj için animasyon durumunu sıfırla.
+      prevContentRef.current = '';
     }
+
+    // İçerik değişmemişse hiçbir şey yapma
+    if (!isContentChanged && !isNewMessage) {
+      return;
+    }
+
+    prevContentRef.current = message.content;
 
     // Animasyonun başlaması veya devam etmesi için koşul.
     // 'showStreaming' true ise veya animasyon zaten başlamışsa devam et.

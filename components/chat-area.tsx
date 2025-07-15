@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 
 import { useChatStore } from '@/lib/store';
@@ -12,6 +12,21 @@ import { QuickActions } from './quick-actions';
 export function ChatArea() {
   const { messages, currentSession, language, isResponding } = useChatStore();
   const scrollRef = useRef<HTMLDivElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const scrollToBottom = useCallback(() => {
+    if (!viewportRef.current) return;
+    
+    // ScrollArea'nın viewport'unu bul
+    const scrollAreaViewport = viewportRef.current.querySelector('[data-radix-scroll-area-viewport]');
+    if (!scrollAreaViewport) return;
+    
+    // Scroll işlemini gerçekleştir
+    scrollAreaViewport.scrollTo({
+      top: scrollAreaViewport.scrollHeight,
+      behavior: 'smooth'
+    });
+  }, []);
+
 
   const itemCount = messages.length + (isResponding ? 1 : 0);
 
@@ -21,6 +36,14 @@ export function ChatArea() {
     estimateSize: () => 200, // Ortalama bir mesaj yüksekliği tahmini (boşluk dahil)
     overscan: 5,
   });
+
+  // Auto-scroll to bottom when messages change or when responding
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      scrollToBottom();
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [messages, isResponding, scrollToBottom]);
 
   const lastMessageContent = messages[messages.length - 1]?.content;
 
@@ -72,42 +95,18 @@ export function ChatArea() {
   return (
     <div className="flex-1 flex flex-col min-h-0">
       <div className="flex-1 overflow-hidden">
-        <ScrollArea className="h-full" ref={scrollRef}>
-          {itemCount > 0 ? (
-            <div
-              className="w-full relative"
-              style={{
-                height: `${rowVirtualizer.getTotalSize()}px`,
-              }}
-            >
-              {virtualItems.map((virtualItem) => {
-                const isLoaderRow = virtualItem.index >= messages.length;
-                const message = messages[virtualItem.index];
-
-                return (
-                  <div
-                    key={isLoaderRow ? 'loader' : message.id}
-                    className="absolute top-0 left-0 w-full"
-                    style={{
-                      transform: `translateY(${virtualItem.start}px)`,
-                    }}
-                    ref={rowVirtualizer.measureElement}
-                    data-index={virtualItem.index}
-                  >
-                    <div className="max-w-5xl mx-auto px-3 sm:px-6 lg:px-8">
-                      {isLoaderRow ? (
-                        <TypingIndicator />
-                      ) : (
-                        <ChatBubble
-                          message={message}
-                          isLastMessage={virtualItem.index === messages.length - 1 && !isResponding}
-                          isResponding={isResponding}
-                        />
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
+        <ScrollArea ref={viewportRef} className="h-full">
+          {messages.length > 0 ? (
+            <div className="max-w-5xl mx-auto px-3 sm:px-6 lg:px-8">
+              {messages.map((message, index) => (
+                <ChatBubble
+                  key={`message-${message.id}`}
+                  message={message}
+                  isLastMessage={index === messages.length - 1 && !isResponding}
+                  isResponding={isResponding}
+                />
+              ))}
+              {isResponding && <TypingIndicator />}
             </div>
           ) : (
             <div className="max-w-5xl mx-auto p-3 sm:p-6 lg:p-8">

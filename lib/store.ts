@@ -226,7 +226,8 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         id: crypto.randomUUID(), session_id: session.id, user_id: session.user_id, role: 'assistant', content: '', created_at: new Date().toISOString(),
       };
       set(state => ({ 
-        messages: [...state.messages, userMessage, assistantMessage],
+      // Mesajları eklerken yeni bir array oluştur
+        messages: [...state.messages, userMessage, assistantMessage].slice(), // Yeni array referansı oluştur
         isResponding: true 
       }));
     }
@@ -251,19 +252,34 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         const { done, value } = await reader.read();
         if (done) break;
         content += decoder.decode(value, { stream: true });
+        
+        // Debug logging
+        console.log('Store - Updating message content:', {
+          contentLength: content.length,
+          messageCount: get().messages.length,
+          sessionId: get().currentSession?.id
+        });
+        
+        // State güncellemesini daha güvenli hale getir
         set(state => ({
-          messages: state.messages.map((m, i) => 
-            i === state.messages.length - 1 ? { ...m, content } : m
-          ),
+          messages: state.messages.map((m, i) => {
+            if (i === state.messages.length - 1) {
+              return { ...m, content };
+            }
+            return m;
+          }).slice(), // Yeni array referansı oluştur
         }));
       }
     } catch (error) {
       console.error('Fetch to /api/chat failed:', error);
       toast.error('Yapay zeka yanıtı alınırken bir hata oluştu.');
       set(state => ({
-        messages: state.messages.map((m, i) => 
-          i === state.messages.length - 1 ? { ...m, content: 'Üzgünüm, bir hata oluştu.' } : m
-        ),
+        messages: state.messages.map((m, i) => {
+          if (i === state.messages.length - 1) {
+            return { ...m, content: 'Üzgünüm, bir hata oluştu.' };
+          }
+          return m;
+        }).slice(), // Yeni array referansı oluştur
       }));
     } finally {
       set({ isResponding: false, isSendingMessage: false });
@@ -329,5 +345,4 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 }));
 
 if (process.env.NODE_ENV === 'development') {
-  // ... existing code ...
 }
