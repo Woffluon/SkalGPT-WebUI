@@ -184,9 +184,9 @@ export async function POST(req: NextRequest) {
 
     const generationConfig = {
         temperature: 0.7,
-        topK: 1,
-        topP: 1,
-        maxOutputTokens: 4096,
+        topK: 40,
+        topP: 0.95,
+        maxOutputTokens: 3072,
     };
 
     const systemInstruction = getSystemPrompt(context);
