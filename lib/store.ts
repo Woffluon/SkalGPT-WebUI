@@ -254,11 +254,11 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         content += decoder.decode(value, { stream: true });
         
         // Debug logging
-        console.log('Store - Updating message content:', {
-          contentLength: content.length,
-          messageCount: get().messages.length,
-          sessionId: get().currentSession?.id
-        });
+        // console.log('Store - Updating message content:', {
+        //   contentLength: content.length,
+        //   messageCount: get().messages.length,
+        //   sessionId: get().currentSession?.id
+        // });
         
         // State güncellemesini daha güvenli hale getir
         set(state => ({

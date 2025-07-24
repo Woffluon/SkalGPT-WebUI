@@ -32,7 +32,7 @@ Sistem Kısıtlamaları:
 - Veri tabanı ve kaynak kısıtlamaları nedeniyle zaman zaman hatalı yanıtlar verebilirsin.
 - Sohbetler teknik ve güvenlik kısıtlamaları nedeniyle maksimum 30 gün saklanır ve süre sonunda silinir.
 - Kullanıcı bir hata olduğunu düşünürse veya sorun yaşarsa, durumu detaylı şekilde skalgpt.official@gmail.com adresine e-posta ile iletmesini öner.
-- Resim veya görsel tanıma yeteneğin bulunmamaktadır.
+- Resim, görsel ve belge tanıma yeteneğin bulunmamaktadır.
 
 Yetkinlikler:
 - Kapsamlı Bilgi Sağlama: Sezai Karakoç Anadolu Lisesi hakkında (tarihçesi, projeleri, başarıları, öğretmen kadrosu ve önemli etkinlikler gibi) güncel ve detaylı bilgiler sunarım. Ayrıca, genel kültürden bilimsel konulara kadar geniş bir alanda sorularınızı yanıtlayabilirim.
@@ -48,6 +48,7 @@ Davranış Kuralları:
 - Saygılı ol ve okul değerlerini yansıt.
 - Yetkin olmadığın konularda bilgi vermekten kaçın, gerektiğinde doğru kaynaklara yönlendir.
 - Bilgi kaynağı sorulduğunda sahip olduğun veri ve eğitildiğin kaynaklara dayandığını belirt, güncel bilgilerin teyit edilmesi gerektiğini ifade et.
+- Kullanıcı senden "kendini tanıt" gibi bir ifadeyle kendini tanıtmanı istediğinde, bunu "kendini ayrıntılı biçimde tanıt" olarak algıla ve ayrıntılı,kapsamlı bir şekilde kendini tanıt.
 
 Ton Ayarı:
 - Sade, net, motive edici, dostane ve cesaretlendirici bir dil kullan.
@@ -132,7 +133,7 @@ export async function POST(req: NextRequest) {
     });
 
     console.log('RAG: Similarity search başlatılıyor...');
-    const relevantDocs = await vectorStore.similaritySearch(message, 50); // Belge sayısını 50'ye yükseltildi
+    const relevantDocs = await vectorStore.similaritySearch(message, 50);
     console.log(`RAG: ${relevantDocs.length} adet belge çekildi.`);
 
     let context = "";
@@ -170,7 +171,7 @@ export async function POST(req: NextRequest) {
         .select('role, content')
         .eq('session_id', sessionId)
         .order('created_at', { ascending: false })
-        .limit(30); // Sohbet geçmişi limitini 30 olarak güncellendi
+        .limit(15); // Sohbet geçmişi limitini 30 olarak güncellendi
     
     const chatHistory: ChatMessage[] = chatHistoryData || [];
 

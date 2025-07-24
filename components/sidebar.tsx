@@ -309,7 +309,7 @@ export function Sidebar({ isSidebarOpen, toggleSidebar }: SidebarProps) {
                 </div>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" side="right" className="w-40">
+            <DropdownMenuContent align="center" side="top" className="w-40">
               <DropdownMenuItem
                 onClick={() => setLanguage('tr')}
                 className={`text-sm md:text-base ${language === 'tr' ? 'bg-gray-100' : ''}`}

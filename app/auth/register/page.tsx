@@ -25,6 +25,7 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 export default function RegisterPage() {
   const [serverError, setServerError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [emailValidationError, setEmailValidationError] = useState<string | null>(null); // Yeni state
   const supabase = createClient();
 
   const form = useForm<RegisterFormValues>({
@@ -37,9 +38,44 @@ export default function RegisterPage() {
     },
   });
 
+  // Yeni fonksiyon: E-posta doğrulaması
+  const validateEmail = async (email: string) => {
+    setEmailValidationError(null);
+    if (!email) {
+      return true;
+    }
+    try {
+      const response = await fetch('/api/validate-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        setEmailValidationError(data.error || 'E-posta doğrulanırken bir hata oluştu.');
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error('API çağrısı hatası:', error);
+      setEmailValidationError('E-posta doğrulanırken bir hata oluştu.');
+      return false;
+    }
+  };
+
   const onSubmit = async (values: RegisterFormValues) => {
     setServerError(null);
     setSuccessMessage(null);
+    setEmailValidationError(null); // Submit öncesi hataları temizle
+
+    // Yeni API rotasını çağır
+    const isEmailValid = await validateEmail(values.email);
+    if (!isEmailValid) {
+      return; // Eğer e-posta geçerli değilse formu submit etme
+    }
 
     const { error } = await supabase.auth.signUp({
       email: values.email,
@@ -53,10 +89,10 @@ export default function RegisterPage() {
     });
 
     if (error) {
-      console.error("Supabase kayıt hatası:", error);
+      console.error('Supabase kayıt hatası:', error);
       setServerError(error.message);
     } else {
-      setSuccessMessage('Kayıt başarılı! Hesabınızı doğrulamak için lütfen e-postanızı kontrol edin.');
+      setSuccessMessage('Kayıt başarılı! Şimdi giriş yapabilirsiniz.');
       form.reset();
     }
   };
@@ -108,9 +144,21 @@ export default function RegisterPage() {
                   <FormItem>
                     <FormLabel>E-posta</FormLabel>
                     <FormControl>
-                      <Input placeholder="ornek@mail.com" {...field} />
+                      <Input
+                        placeholder="ornek@mail.com"
+                        {...field}
+                        onBlur={(e) => { // onBlur ekle
+                          field.onBlur();
+                          validateEmail(e.target.value);
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
+                    {emailValidationError && ( // Hata mesajını göster
+                      <p className="text-sm font-medium text-destructive mt-1">
+                        {emailValidationError}
+                      </p>
+                    )}
                   </FormItem>
                 )}
               />
