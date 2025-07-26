@@ -40,7 +40,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
         ul: ({ children }) => <ul className="list-disc list-inside space-y-1 mb-4 ml-4">{children}</ul>,
         ol: ({ children }) => <ol className="list-decimal list-inside space-y-1 mb-4 ml-4">{children}</ol>,
           a: ({ href, children }) => (
-          <a href={href} target="_blank" rel="noopener noreferrer" className="text-primary underline">
+          <a href={href} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
               {children}
             </a>
           ),
@@ -87,7 +87,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
             }
 
             return (
-              <code className="bg-slate-200 text-slate-800 rounded px-1.5 py-0.5 text-sm font-mono" {...props}>
+              <code className="bg-muted text-foreground rounded px-1.5 py-0.5 text-sm font-mono dark:bg-muted dark:text-foreground" {...props}>
                 {children}
               </code>
             );

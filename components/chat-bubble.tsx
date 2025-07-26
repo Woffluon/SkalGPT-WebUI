@@ -3,6 +3,7 @@
 import { Message } from '@/types/chat';
 import dynamic from 'next/dynamic';
 import { useEffect, useState, useRef } from 'react';
+import { formatTime } from '@/lib/utils';
 
 // Markdown renderer'ı dinamik olarak yüklüyoruz.
 const DynamicMarkdownRenderer = dynamic(
@@ -18,6 +19,7 @@ interface ChatBubbleProps {
   message: Message;
   isLastMessage: boolean;
   isResponding: boolean;
+  responseTime?: number; // New prop for response time
 }
 
 export function ChatBubble({ message, isLastMessage, isResponding }: ChatBubbleProps) {
@@ -77,19 +79,26 @@ export function ChatBubble({ message, isLastMessage, isResponding }: ChatBubbleP
   }, [displayedText, message.content, showStreaming, message.id, isUser, isLastMessage]);
 
   return (
-    <div className={`flex w-full my-6 ${isUser ? 'justify-end' : 'justify-start'}`}>
-      <div
-        className={`max-w-[90%] rounded-xl px-3 py-2 sm:px-4 sm:py-3 shadow-md transition-all ${
+    <div className={`flex w-full my-6 ${isUser ? 'justify-end' : 'justify-start'} flex-col`}>
+      <div className={`flex w-full ${isUser ? 'justify-end' : 'justify-start'}`}>
+        <div
+          className={`max-w-[90%] rounded-xl px-3 py-2 sm:px-4 sm:py-3 shadow-md transition-all ${
             isUser
-            ? 'bg-blue-600 text-white'
-            : 'bg-white text-slate-900 border border-slate-100 dark:bg-slate-800 dark:text-slate-50 dark:border-slate-700'
+              ? 'bg-primary text-primary-foreground'
+              : 'bg-card text-foreground border border-border dark:bg-card dark:text-foreground dark:border-border'
           }`}
         >
-        {/* Metni ve stilleri tek bir yerden yönetiyoruz */}
-        <div className="prose prose-sm sm:prose-base max-w-none text-current dark:prose-invert prose-p:my-2 prose-headings:my-3">
-          <DynamicMarkdownRenderer content={displayedText} />
+          {/* Metni ve stilleri tek bir yerden yönetiyoruz */}
+          <div className="prose prose-sm sm:prose-base max-w-none text-current dark:prose-invert prose-p:my-2 prose-headings:my-3">
+            <DynamicMarkdownRenderer content={displayedText} />
+          </div>
         </div>
       </div>
+      {!isUser && 'responseTime' in message && message.responseTime !== undefined && (
+        <div className="text-left text-xs text-muted-foreground mt-1 ml-1">
+          Response time: {formatTime(Number(message.responseTime) || 0)}
+        </div>
+      )}
     </div>
   );
 }

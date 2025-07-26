@@ -14,37 +14,37 @@ export function QuickActions() {
         icon: Calculator,
         label: 'Matematik',
         prompt: 'Bu matematik problemini çöz: ',
-        color: 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+        color: 'bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-950/50 dark:text-blue-300 dark:hover:bg-blue-900/50'
       },
       {
         icon: BookOpen,
         label: 'Açıkla',
         prompt: 'Bu konuyu detaylı açıkla: ',
-        color: 'bg-green-100 text-green-700 hover:bg-green-200'
+        color: 'bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-950/50 dark:text-green-300 dark:hover:bg-green-900/50'
       },
       {
         icon: FileText,
         label: 'Özet',
         prompt: 'Bu metni özetle: ',
-        color: 'bg-purple-100 text-purple-700 hover:bg-purple-200'
+        color: 'bg-purple-100 text-purple-700 hover:bg-purple-200 dark:bg-purple-950/50 dark:text-purple-300 dark:hover:bg-purple-900/50'
       },
       {
         icon: Lightbulb,
         label: 'Fikir',
         prompt: 'Bu konu hakkında yaratıcı fikirler ver: ',
-        color: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
+        color: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200 dark:bg-yellow-950/50 dark:text-yellow-300 dark:hover:bg-yellow-900/50'
       },
       {
         icon: Code,
         label: 'Kod',
         prompt: 'Bu kodu açıkla ve örnekle: ',
-        color: 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+        color: 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
       },
       {
         icon: Globe,
         label: 'Çevir',
         prompt: 'Bu metni çevir: ',
-        color: 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200'
+        color: 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200 dark:bg-indigo-950/50 dark:text-indigo-300 dark:hover:bg-indigo-900/50'
       }
     ],
     en: [
@@ -52,37 +52,37 @@ export function QuickActions() {
         icon: Calculator,
         label: 'Math',
         prompt: 'Solve this math problem: ',
-        color: 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+        color: 'bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-950/50 dark:text-blue-300 dark:hover:bg-blue-900/50'
       },
       {
         icon: BookOpen,
         label: 'Explain',
         prompt: 'Explain this topic in detail: ',
-        color: 'bg-green-100 text-green-700 hover:bg-green-200'
+        color: 'bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-950/50 dark:text-green-300 dark:hover:bg-green-900/50'
       },
       {
         icon: FileText,
         label: 'Summary',
         prompt: 'Summarize this text: ',
-        color: 'bg-purple-100 text-purple-700 hover:bg-purple-200'
+        color: 'bg-purple-100 text-purple-700 hover:bg-purple-200 dark:bg-purple-950/50 dark:text-purple-300 dark:hover:bg-purple-900/50'
       },
       {
         icon: Lightbulb,
         label: 'Ideas',
         prompt: 'Give creative ideas about: ',
-        color: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
+        color: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200 dark:bg-yellow-950/50 dark:text-yellow-300 dark:hover:bg-yellow-900/50'
       },
       {
         icon: Code,
         label: 'Code',
         prompt: 'Explain this code with examples: ',
-        color: 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+        color: 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
       },
       {
         icon: Globe,
         label: 'Translate',
         prompt: 'Translate this text: ',
-        color: 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200'
+        color: 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200 dark:bg-indigo-950/50 dark:text-indigo-300 dark:hover:bg-indigo-900/50'
       }
     ]
   };

@@ -20,9 +20,11 @@ interface ChatStore {
   error: string | null;
   isSidebarOpen: boolean;
   language: 'tr' | 'en';
+  responseTime: number; // New state for response time
+  responseTimerInterval: NodeJS.Timeout | null; // New state for timer interval
   
   // Actions
-  fetchSessions: () => Promise<void>;
+  fetchSessions: (offset?: number, limit?: number) => Promise<boolean>;
   fetchMessages: (sessionId: string) => Promise<void>;
   createNewSession: (title?: string, initialMessageContent?: string) => Promise<ChatSession | null>;
   setCurrentSession: (session: ChatSession | null) => void;
@@ -36,9 +38,14 @@ interface ChatStore {
   startNewConversation: (router: any) => void;
   setLanguage: (lang: 'tr' | 'en') => void;
   updateSessionTitle: (sessionId: string, newTitle: string) => Promise<void>;
+  startResponseTimer: () => void; // New action to start the timer
+  stopResponseTimer: () => void; // New action to stop the timer
+  resetResponseTimer: () => void; // New action to reset the timer
 }
 
-export const useChatStore = create<ChatStore>((set, get) => ({
+export const useChatStore = create<ChatStore>((set, get) => {
+  console.log('useChatStore initialized or re-initialized');
+  return {
   sessions: [],
   sessionsFetched: false,
   currentSession: null,
@@ -50,39 +57,57 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   error: null,
   isSidebarOpen: true,
   language: 'tr',
+  responseTime: 0,
+  responseTimerInterval: null,
 
   setUser: (user) => set({ user }),
 
-  fetchSessions: async () => {
+  fetchSessions: async (offset: number = 0, limit: number = 10): Promise<boolean> => {
     const { isSendingMessage, sessionsFetched } = get();
+    
+    // Eğer mesaj gönderme işlemi devam ediyorsa, işlemi iptal et
     if (isSendingMessage) {
-      return;
+      return false;
     }
-    if (sessionsFetched) {
-      return;
+    
+    // Eğer offset 0 değilse (yani daha fazla oturum yükleme durumu) ve sessionsFetched true ise
+    // bu durumda normal şekilde devam et
+    // Eğer offset 0 ise (ilk yükleme) ve sessionsFetched true ise, tekrar yükleme yapma
+    if (offset === 0 && sessionsFetched) {
+      return true; // Oturumlar zaten yüklenmiş, daha fazla oturum olup olmadığını döndür
     }
 
     set({ isLoading: true });
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       set({ sessions: [], isLoading: false, user: null, sessionsFetched: true });
-      return;
+      return false;
     }
     set({ user });
 
-    const { data, error } = await supabase
+    const { data, error, count } = await supabase
       .from('chat_sessions')
-      .select('*')
+      .select('*', { count: 'exact' })
       .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
+      .range(offset, offset + limit - 1);
 
     if (error) {
       toast.error('Oturumlar yüklenirken bir hata oluştu.');
       console.error('Error fetching sessions:', error);
       set({ isLoading: false });
-      return;
+      return false;
     }
-    set({ sessions: data || [], isLoading: false, sessionsFetched: true });
+    
+    const newSessions = data || [];
+    set(state => ({
+      sessions: offset === 0 ? newSessions : [...state.sessions, ...newSessions],
+      isLoading: false,
+      sessionsFetched: true
+    }));
+    
+    const hasMore = (count !== null && (offset + newSessions.length) < count);
+    return hasMore;
   },
 
   fetchMessages: async (sessionId: string) => {
@@ -105,6 +130,13 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     set({ messages: data || [], isLoading: false });
   },
 
+  // Override sendMessage to stop the timer when response is received
+  // This is a placeholder, actual implementation will be in chat-area.tsx
+  // or where isResponding is set to false
+  // We need to ensure stopResponseTimer is called when the AI finishes responding.
+  // For now, we'll rely on the component to call it.
+
+
   setCurrentSession: (session: ChatSession | null) => {
     if (get().currentSession?.id === session?.id && session !== null) {
       return;
@@ -116,6 +148,27 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     } else {
       set({ currentSession: null, messages: [], isLoading: false });
     }
+  },
+
+  startResponseTimer: () => {
+    set({ responseTime: 0 });
+    const interval = setInterval(() => {
+      set(state => ({ responseTime: state.responseTime + 1 }));
+    }, 1000);
+    set({ responseTimerInterval: interval });
+  },
+
+  stopResponseTimer: () => {
+    const { responseTimerInterval } = get();
+    if (responseTimerInterval) {
+      clearInterval(responseTimerInterval);
+      set({ responseTimerInterval: null });
+    }
+  },
+
+  resetResponseTimer: () => {
+    get().stopResponseTimer();
+    set({ responseTime: 0 });
   },
 
   updateSessionTitle: async (sessionId: string, newTitle: string) => {
@@ -161,6 +214,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   
   sendMessage: async (text: string, router: any): Promise<void> => {
     set({ isSendingMessage: true, error: null });
+    get().startResponseTimer(); // Start the timer when message is sent
     const isNewSession = !get().currentSession;
 
     if (isNewSession) {
@@ -198,6 +252,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         }));
 
         router.push(`/chat/${newSession.id}`);
+
+        // Stop the timer when the response is received (or when isResponding becomes false)
+        // This part will be handled in chat-area.tsx or where isResponding is set to false
+
 
         fetch('/api/generate-title', {
           method: 'POST',
@@ -342,7 +400,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     });
     toast.success("Başarıyla çıkış yapıldı.");
   }
-}));
+}}); // End of useChatStore;
 
 if (process.env.NODE_ENV === 'development') {
 }

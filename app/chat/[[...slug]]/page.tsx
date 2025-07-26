@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useChatStore } from '@/lib/store';
 import { ChatInterface } from '@/components/chat-interface';
@@ -18,13 +18,23 @@ export default function ChatPage() {
     setCurrentSession,
     isLoading,
     isSendingMessage,
+    sessionsFetched,
   } = useChatStore();
 
+  const hasFetchedInitialSessions = useRef(false);
 
   // 1. Fetch all sessions on initial load
   useEffect(() => {
-    fetchSessions();
-  }, [fetchSessions]);
+    // Oturumlar henüz yüklenmemişse ve daha önce yükleme denemesi yapılmamışsa
+    if (!hasFetchedInitialSessions.current && !sessionsFetched) {
+      // Oturumları yükle
+      fetchSessions();
+      hasFetchedInitialSessions.current = true;
+    }
+  }, [fetchSessions, sessionsFetched]);
+
+
+
 
   // 2. Sync Store from URL (`slug`)
   // This effect ensures that the active session in the store matches the session ID in the URL.
@@ -34,7 +44,7 @@ export default function ChatPage() {
       return;
     }
     // Also, wait for sessions to be loaded initially.
-    if (isLoading) {
+    if (isLoading || !sessionsFetched) {
       return;
     }
 

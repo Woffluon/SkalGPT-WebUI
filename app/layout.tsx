@@ -1,8 +1,20 @@
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Montserrat } from 'next/font/google';
+import { ThemeProvider } from '@/components/theme-provider';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+});
+
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  variable: '--font-montserrat',
+  display: 'swap',
+  weight: ['400', '500', '600', '700', '800', '900'],
+});
 
 export const metadata: Metadata = {
   icons: {
@@ -43,8 +55,10 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
-      <body className={`${inter.className} antialiased`}>
-        {children}
+      <body className={`${inter.variable} ${montserrat.variable} font-sans antialiased`}>
+        <ThemeProvider defaultTheme="light" storageKey="skalgpt-theme">
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

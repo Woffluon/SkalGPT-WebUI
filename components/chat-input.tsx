@@ -53,7 +53,7 @@ export function ChatInput({ className }: any) {
     <div className="flex-shrink-0">
       <div className="p-3 sm:p-6">
         <div className="max-w-4xl mx-auto">
-          <div className="card-modern p-3 sm:p-4">
+          <div className="p-3 sm:p-4 bg-card border border-border rounded-2xl shadow-sm">
             <form onSubmit={handleSubmit} className="flex items-center gap-2 sm:gap-3">
               <div className="flex-1 relative">
                 <Textarea
@@ -62,7 +62,7 @@ export function ChatInput({ className }: any) {
                   onChange={(e) => setMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder={texts[language].placeholder}
-                  className="min-h-[40px] sm:min-h-[48px] max-h-32 resize-none bg-white border-gray-300 text-gray-800 placeholder:text-gray-500 focus:border-gray-300 focus:ring-gray-200/50 text-sm sm:text-base cursor-text"
+                  className="min-h-[40px] sm:min-h-[48px] max-h-32 resize-none bg-background border-border text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20 text-sm sm:text-base cursor-text dark:bg-background dark:border-border dark:text-foreground dark:placeholder:text-muted-foreground"
                   disabled={isResponding}
                 />
               </div>
@@ -72,7 +72,7 @@ export function ChatInput({ className }: any) {
                 <Button
                   type="submit"
                   disabled={!message.trim() || isResponding}
-                  className="skal-gradient hover:opacity-90 text-white border-0 flex-shrink-0 h-9 w-9 sm:h-10 sm:w-10 rounded-xl shadow-sm"
+                  className="bg-gradient-to-r from-[#F3904F] to-[#3B4371] hover:from-[#3B4371] hover:to-[#F3904F] text-primary-foreground border-0 flex-shrink-0 h-9 w-9 sm:h-10 sm:w-10 rounded-xl shadow-sm"
                   size="icon"
                 >
                   <Send className="h-3 w-3 sm:h-4 sm:w-4" />
@@ -82,7 +82,7 @@ export function ChatInput({ className }: any) {
           </div>
           {/* Disclaimer */}
           <div className="text-center mt-2 sm:mt-3">
-            <p className="text-xs text-gray-500 px-4 sm:px-0">
+            <p className="text-xs text-muted-foreground px-4 sm:px-0">
               {texts[language].disclaimer}
             </p>
           </div>

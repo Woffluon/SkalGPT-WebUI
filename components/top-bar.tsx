@@ -12,6 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
+import { ModeToggle } from './mode-toggle';
 
 export function TopBar() {
   const { toggleSidebar, language, setLanguage } = useChatStore();
@@ -31,24 +32,23 @@ export function TopBar() {
 
   return (
     <header className="relative z-30 h-16 sm:h-20 px-3 sm:px-6 pt-4">
-      <div className="card-modern h-full flex items-center justify-between px-3 sm:px-6 mx-2 sm:mx-4">
+      <div className="h-full flex items-center justify-between px-3 sm:px-6 mx-2 sm:mx-4 bg-card border border-border rounded-2xl shadow-sm">
         <div className="flex items-center gap-2 sm:gap-4">
           <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleSidebar}
-            className="h-8 w-8 sm:h-10 sm:w-10 rounded-xl hover:bg-gray-100 text-gray-600"
+              variant="ghost"
+              size="icon"
+              onClick={toggleSidebar}
+              className="h-8 w-8 sm:h-10 sm:w-10 rounded-xl bg-gradient-to-r from-[#F3904F] to-[#3B4371] text-white dark:text-white hover:bg-gradient-to-r hover:from-[#F3904F] hover:to-[#3B4371] hover:text-white"
           >
             <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
           </Button>
           
           <div className="flex items-center gap-2 sm:gap-3">
-            <Image src="/favicon.png" alt="SkalGPT Logo" width={40} height={40} className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl shadow-md" />
             <div>
-              <h1 className="h3 font-semibold text-gray-800">
+              <h1 className="text-2xl font-black text-foreground tracking-tight">
                 SkalGPT
               </h1>
-              <p className="text-xs text-gray-500 hidden sm:block">
+              <p className="text-xs font-medium text-muted-foreground hidden sm:block tracking-normal">
                 {texts[language].school}
               </p>
             </div>
@@ -57,12 +57,14 @@ export function TopBar() {
 
         <div className="flex items-center gap-1 sm:gap-2">
           <div>
-            <Button asChild variant="ghost" size="icon" className="h-8 w-8 sm:h-10 sm:w-10 rounded-xl hover:bg-gray-100 text-gray-600">
+            <Button asChild variant="ghost" size="icon" className="h-8 w-8 sm:h-10 sm:w-10 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400">
               <Link href="/chat">
                 <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
               </Link>
             </Button>
           </div>
+
+          <ModeToggle />
 
           <div>
             <DropdownMenu>
@@ -70,7 +72,7 @@ export function TopBar() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 sm:h-10 sm:w-10 rounded-xl hover:bg-gray-100 text-gray-600"
+                  className="h-8 w-8 sm:h-10 sm:w-10 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400"
                 >
                   <Languages className="h-4 w-4 sm:h-5 sm:w-5" />
                 </Button>
@@ -78,13 +80,13 @@ export function TopBar() {
               <DropdownMenuContent align="end" className="w-40">
                 <DropdownMenuItem 
                   onClick={() => setLanguage('tr')}
-                  className={language === 'tr' ? 'bg-gray-100' : ''}
+                  className={language === 'tr' ? 'bg-gray-100 dark:bg-gray-800' : ''}
                 >
                   🇹🇷 {texts[language].turkish}
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => setLanguage('en')}
-                  className={language === 'en' ? 'bg-gray-100' : ''}
+                  className={language === 'en' ? 'bg-gray-100 dark:bg-gray-800' : ''}
                 >
                   🇬🇧 {texts[language].english}
                 </DropdownMenuItem>

@@ -35,7 +35,7 @@ export function ChatInterface() {
   }, [toggleSidebar]);
 
   return (
-    <div className="relative h-screen w-full bg-gradient-to-br from-slate-50 to-slate-100 flex">
+    <div className="relative h-screen w-full bg-background dark:bg-background flex">
       {/* --- DESKTOP SIDEBAR --- */}
       <motion.div
         className="hidden lg:block overflow-hidden"
